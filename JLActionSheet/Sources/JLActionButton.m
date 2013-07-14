@@ -29,38 +29,31 @@
 #pragma mark -
 #pragma mark - Inititalization Methods
 
-+ (id) buttonWithStyle:(JLActionSheetStyle*)style andTitle:(NSString *)buttonTitle isCancel:(BOOL) isCancel
-{
++ (id)buttonWithStyle:(JLActionSheetStyle *)style andTitle:(NSString *)buttonTitle isCancel:(BOOL)isCancel isDestructive:(BOOL)destructive {
     JLActionButton* actionButton = [JLActionButton buttonWithType:UIButtonTypeCustom];
     [actionButton setTitle:buttonTitle forState:UIControlStateNormal];
     
-    if (!isCancel)
-    {
-        actionButton.bgColor            = [style getBGColorHighlighted:NO];
-        actionButton.highlightedColor   = [style getBGColorHighlighted:YES];
-    }
-    else if (isCancel)
-    {
-        actionButton.bgColor            = [style getCancelBGColorHighlighted:NO];
-        actionButton.highlightedColor   = [style getCancelBGColorHighlighted:YES];
-    }
-    
+    actionButton.bgColor            = [style getBGColorHighlighted:NO];
+    actionButton.highlightedColor   = [style getBGColorHighlighted:YES];
+
     // Initialize and add the two border objects
     actionButton.topBorder = [[CALayer alloc] init];
-    [actionButton.topBorder setBackgroundColor:style.lightBorderColor.CGColor];
+    [actionButton.topBorder setBackgroundColor:style.darkBorderColor.CGColor];
     [actionButton.layer addSublayer:actionButton.topBorder];
     
     actionButton.bottomBorder = [[CALayer alloc] init];
     [actionButton.bottomBorder setBackgroundColor:style.darkBorderColor.CGColor];
-    [actionButton.layer addSublayer:actionButton.bottomBorder];
+    //[actionButton.layer addSublayer:actionButton.bottomBorder];
     
     
     // Configure the title item
-    [actionButton.titleLabel setFont:[UIFont systemFontOfSize:20.0f]];
-    [actionButton setTitleColor:[style getTextColor:isCancel] forState:UIControlStateNormal];
-    [actionButton setTitleShadowColor:[style getTextShadowColor:isCancel] forState:UIControlStateNormal];
-    [actionButton.titleLabel setShadowOffset:CGSizeMake(0.0f, -1.0f)];
-    
+    if (isCancel) {
+        [actionButton.titleLabel setFont:[UIFont fontWithName:@"HelveticaNeue-Bold" size:18]];
+    } else {
+        [actionButton.titleLabel setFont:[UIFont fontWithName:@"HelveticaNeue" size:18]];
+    }
+
+    [actionButton setTitleColor:[style getTextColor:destructive] forState:UIControlStateNormal];
     [actionButton setAutoresizingMask:(UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleTopMargin)];
     [actionButton setBackgroundColor:actionButton.bgColor];
     return actionButton;

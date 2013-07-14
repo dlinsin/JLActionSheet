@@ -74,7 +74,7 @@
             _textColor              = Color(40, 40, 40, 1.0);
             _textShadowColor        = Color(220, 220, 220, .75);
             
-            _cancelTextColor        = [UIColor whiteColor];
+            _cancelTextColor        = [UIColor redColor];
             _cancelTextShadowColor  = [UIColor colorWithWhite:.05 alpha:1.0];
         }
         else if (style == JLSTYLE_FERRARI)

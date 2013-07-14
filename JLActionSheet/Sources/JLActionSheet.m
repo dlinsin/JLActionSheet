@@ -45,7 +45,7 @@ const NSInteger cancelButtonTag      = 9382;
 const NSInteger buttonParentsViewTag = 28453;
 const NSInteger tapBGViewTag         = 4292;
 
-- (id) initWithTitle:(NSString *)title delegate:(id<JLActionSheetDelegate>)delegate cancelButtonTitle:(NSString *)cancelTitle otherButtonTitles:(NSArray *)buttonTitles
+- (id) initWithTitle:(NSString *)title delegate:(id<JLActionSheetDelegate>)delegate cancelButtonTitle:(NSString *)cancelTitle otherButtonTitles:(NSArray *)buttonTitles destructiveIdx:(NSInteger)idx
 {
     if (self = [super init])
     {
@@ -53,6 +53,7 @@ const NSInteger tapBGViewTag         = 4292;
         _cancelTitle        = cancelTitle;
         _delegate           = delegate;
         _cancelButtonIndex  = -1;
+        _destructiveIdx = idx;
         
         // Reverse the order of the button titles so the buttons are displayed in the correct order
         NSMutableArray* tempTitles  = [[NSMutableArray alloc] initWithCapacity:buttonTitles.count];
@@ -80,9 +81,9 @@ const NSInteger tapBGViewTag         = 4292;
 }
 
 
-+ (id) sheetWithTitle:(NSString *)title delegate:(id<JLActionSheetDelegate>)delegate cancelButtonTitle:(NSString *)cancelTitle otherButtonTitles:(NSArray *)buttonTitles
++ (id) sheetWithTitle:(NSString *)title delegate:(id<JLActionSheetDelegate>)delegate cancelButtonTitle:(NSString *)cancelTitle otherButtonTitles:(NSArray *)buttonTitles destructiveIdx:(NSInteger)idx
 {
-    return [[JLActionSheet alloc] initWithTitle:title delegate:delegate cancelButtonTitle:cancelTitle otherButtonTitles:buttonTitles];
+    return [[JLActionSheet alloc] initWithTitle:title delegate:delegate cancelButtonTitle:cancelTitle otherButtonTitles:buttonTitles destructiveIdx:idx];
 }
 
 #pragma mark - 
@@ -98,58 +99,56 @@ const NSInteger tapBGViewTag         = 4292;
     CGFloat parentViewHeight            = ((buttonHeight * buttonCount) + titleOffset);
     UIView* buttonParentView            = [[UIView alloc] initWithFrame:CGRectMake(0, (CGRectGetHeight(self.bounds) - parentViewHeight), CGRectGetWidth(self.bounds), parentViewHeight)];
     CGFloat currentButtonTop            = buttonParentView.bounds.size.height - buttonHeight;
-    CGFloat currentButtonTag            = 0;
+    NSInteger currentButtonTag            = 0;
     
     if (_cancelTitle)
     {
-        JLActionButton* cancelButton    = [JLActionButton buttonWithStyle:currentStlye andTitle:_cancelTitle isCancel:YES];
+        JLActionButton* cancelButton    = [JLActionButton buttonWithStyle:currentStlye andTitle:_cancelTitle isCancel:YES isDestructive:NO];
         cancelButton.tag                = currentButtonTag++;
         _cancelButtonIndex              = cancelButton.tag;
         
         [cancelButton addTarget:self action:@selector(buttonClicked:) forControlEvents:UIControlEventTouchUpInside];
-        [cancelButton setFrame:CGRectMake(0, currentButtonTop, CGRectGetWidth(buttonParentView.bounds), buttonHeight)];
+        [cancelButton setFrame:CGRectMake(10.0, currentButtonTop, CGRectGetWidth(buttonParentView.bounds)-20.0, buttonHeight-20)];
         [buttonParentView addSubview:cancelButton];
         
         currentButtonTop -= buttonHeight;
     }
     
+    int i = 0;
     for (NSString* currentButtonTitle in _buttonTitles)
     {
-        JLActionButton* currentActionButton = [JLActionButton buttonWithStyle:currentStlye andTitle:currentButtonTitle isCancel:NO];
+        JLActionButton* currentActionButton = [JLActionButton buttonWithStyle:currentStlye andTitle:currentButtonTitle isCancel:NO isDestructive:(i == _destructiveIdx)];
         currentActionButton.tag             = currentButtonTag++;
         
         [currentActionButton addTarget:self action:@selector(buttonClicked:) forControlEvents:UIControlEventTouchUpInside];
-        [currentActionButton setFrame:CGRectMake(0, currentButtonTop, CGRectGetWidth(buttonParentView.bounds), buttonHeight)];
+        [currentActionButton setFrame:CGRectMake(10, currentButtonTop, CGRectGetWidth(buttonParentView.bounds)-20, buttonHeight-20)];
         [buttonParentView addSubview:currentActionButton];
         
-        currentButtonTop -= buttonHeight;
+        currentButtonTop -= buttonHeight-20;
+        i++;
     }
     
     // Handle creating the title object if there is a title provided
     if (_title.length > 0 && allowTitle)
     {
-        [buttonParentView setBackgroundColor:[currentStlye getBGColorHighlighted:NO]];
-        [((JLActionButton*)[buttonParentView.subviews lastObject]) configureForTitle];
+        JLActionButton* currentActionButton = [JLActionButton buttonWithStyle:currentStlye andTitle:@"" isCancel:NO isDestructive:NO ];
         
-        UILabel* titleLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, CGRectGetWidth(buttonParentView.bounds), titleOffset)];        
-        [titleLabel setAutoresizingMask:(UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleBottomMargin)];
-        [titleLabel setBackgroundColor:[UIColor clearColor]];
-        [titleLabel setFont:[UIFont systemFontOfSize:14.0f]];
-        [titleLabel setTextColor:[currentStlye getTextColor:NO]];
-        [titleLabel setShadowOffset:CGSizeMake(0, -1.0)];
-        [titleLabel setShadowColor:[currentStlye getTextShadowColor:NO]];
-        [titleLabel setTextAlignment:NSTextAlignmentCenter];
-        [titleLabel setText:_title];
-        
-        [buttonParentView addSubview:titleLabel];
+        [currentActionButton setFrame:CGRectMake(10, currentButtonTop-10, CGRectGetWidth(buttonParentView.bounds)-20, buttonHeight-10)];
+
+        [buttonParentView addSubview:currentActionButton];
+
+        UILabel *titleLabel = [[UILabel alloc] initWithFrame:CGRectMake(5.0f, 5.0f, CGRectGetWidth(currentActionButton.bounds) - 10.0f, CGRectGetHeight(currentActionButton.bounds) - 10.0f)];
+        titleLabel.text = _title;
+        titleLabel.backgroundColor = [UIColor clearColor];
+        titleLabel.numberOfLines = 2;
+        titleLabel.textAlignment = NSTextAlignmentCenter;
+        [titleLabel setFont:[UIFont fontWithName:@"HelveticaNeue-Light" size:12]];
+
+        [currentActionButton addSubview:titleLabel];
+
+        currentActionButton.enabled = NO;
     }
     [buttonParentView setAutoresizingMask:(UIViewAutoresizingFlexibleTopMargin | UIViewAutoresizingFlexibleWidth)];
-    [buttonParentView.layer setShadowColor:[UIColor blackColor].CGColor];
-    [buttonParentView.layer setShadowOffset:CGSizeMake(0, -3.0f)];
-    [buttonParentView.layer setShadowOpacity:.3f];
-    [buttonParentView.layer setShadowRadius:4.0f];
-    CGPathRef path = [UIBezierPath bezierPathWithRect:buttonParentView.bounds].CGPath;
-    [buttonParentView.layer setShadowPath:path];
     return buttonParentView;
 }
 
