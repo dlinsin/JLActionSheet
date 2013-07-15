@@ -30,7 +30,7 @@
 
 /// UI Objects
 #define kDefaultStyle JLSTYLE_STEEL
-#define kActionButtonHeight 60.0f
+#define kActionButtonHeight 64.0f
 
 /// Display Macros
 #define kBGFadeOpacity .3
@@ -142,7 +142,7 @@ const NSInteger tapBGViewTag         = 4292;
         titleLabel.backgroundColor = [UIColor clearColor];
         titleLabel.numberOfLines = 2;
         titleLabel.textAlignment = NSTextAlignmentCenter;
-        [titleLabel setFont:[UIFont fontWithName:@"HelveticaNeue-Light" size:12]];
+        [titleLabel setFont:[UIFont fontWithName:@"HelveticaNeue-Light" size:13]];
 
         [currentActionButton addSubview:titleLabel];
 

@@ -48,9 +48,9 @@
     
     // Configure the title item
     if (isCancel) {
-        [actionButton.titleLabel setFont:[UIFont fontWithName:@"HelveticaNeue-Bold" size:18]];
+        [actionButton.titleLabel setFont:[UIFont fontWithName:@"HelveticaNeue-Bold" size:19]];
     } else {
-        [actionButton.titleLabel setFont:[UIFont fontWithName:@"HelveticaNeue" size:18]];
+        [actionButton.titleLabel setFont:[UIFont fontWithName:@"HelveticaNeue" size:19]];
     }
 
     [actionButton setTitleColor:[style getTextColor:destructive] forState:UIControlStateNormal];
