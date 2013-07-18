@@ -147,6 +147,9 @@ const NSInteger tapBGViewTag         = 4292;
         [currentActionButton addSubview:titleLabel];
 
         currentActionButton.enabled = NO;
+        [currentActionButton setAccessibilityLabel:_title];
+        [currentActionButton setAccessibilityTraits:UIAccessibilityTraitStaticText];
+
     }
     [buttonParentView setAutoresizingMask:(UIViewAutoresizingFlexibleTopMargin | UIViewAutoresizingFlexibleWidth)];
     return buttonParentView;
