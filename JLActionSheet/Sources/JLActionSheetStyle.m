@@ -53,12 +53,12 @@
         }
         else if (style == JLSTYLE_SUPERCLEAN || style == JLSTYLE_CLEANBLUE)
         {
-            _standardBGColor        = Color(220, 220, 220, 1.0);
+            _standardBGColor        = Color(240, 236, 234, 1.0);
             _highlightedBGColor     = Color(205, 205, 205, 1.0);
             
             if (style == JLSTYLE_SUPERCLEAN)
             {
-                _cancelBGColor          = Color(165, 24, 13, 1.0);
+                _cancelBGColor          = Color(229, 226, 226, 1.0);
                 _cancelHighlightedBG    = Color(135, 20, 9, 1.0);
             }
             else
